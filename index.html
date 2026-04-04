@@ -38,6 +38,19 @@
             letter-spacing: 0.05em;
         }
 
+        .weather {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #8888aa;
+            font-weight: 300;
+        }
+
+        .weather-temp {
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            font-weight: 200;
+        }
+
         .links {
             margin-top: 2rem;
             display: flex;
@@ -65,15 +78,17 @@
     <div class="container">
         <div class="greeting" id="greeting"></div>
         <div class="clock" id="clock"></div>
+        <div class="weather" id="weather">Loading weather...</div>
         <div class="links">
             <a href="https://www.bbc.co.uk/news">BBC News</a>
             <a href="https://gmail.com">Gmail</a>
             <a href="https://claude.ai">Claude</a>
-            <a href="https://platform.walr.com/">Walr</a>
+            <a href="https://github.com">GitHub</a>
         </div>
     </div>
 
     <script>
+        // ---- CLOCK ----
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -81,6 +96,7 @@
             document.getElementById('clock').textContent = hours + ':' + minutes;
         }
 
+        // ---- GREETING ----
         function updateGreeting() {
             const hour = new Date().getHours();
             let greeting;
@@ -90,9 +106,32 @@
             document.getElementById('greeting').textContent = greeting;
         }
 
+        // ---- WEATHER ----
+        async function fetchWeather() {
+            const apiKey = '1f16fe94253a7bfb67123eef0bb70915';
+            const city = 'Ferndown,GB';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const temp = Math.round(data.main.temp);
+                const description = data.weather[0].description;
+
+                document.getElementById('weather').innerHTML =
+                    `<span class="weather-temp">${temp}°C</span><br>${description}`;
+            } catch (error) {
+                document.getElementById('weather').textContent = 'Weather unavailable';
+            }
+        }
+
+        // ---- RUN EVERYTHING ----
         updateClock();
         updateGreeting();
+        fetchWeather();
         setInterval(updateClock, 1000);
     </script>
 </body>
+</html>
 </html>
